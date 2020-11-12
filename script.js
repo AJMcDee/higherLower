@@ -12,6 +12,7 @@ let musicalNotes = [
   "B",
   "C",
 ];
+let resultRevealSection = document.getElementById("resultReveal");
 
 function generateRandomNote() {
   let index = Math.floor(Math.random() * musicalNotes.length);
@@ -45,7 +46,7 @@ function notesSelection(noteAmount, difficultyLevel) {
   return finalNotes;
 }
 
-function isSecondNoteHigher(arrOfNotes) {
+function isHigher(arrOfNotes) {
   let isHigher = arrOfNotes[1].index > arrOfNotes[0].index ? true : false;
   return isHigher;
 }
@@ -75,12 +76,70 @@ function playAllNotes(arrOfNotes) {
     let noteAudio = new Audio(`./files/${note.index}.mp3`);
     arrOfAudio.push(noteAudio);
   }
-  document.getElementById("play").addEventListener("click", () => {
-    for (let audiofile of arrOfAudio) {
-      audiofile.play();
+
+  let currentAudio = null;
+  let index = 0;
+  function playNote() {
+    if (currentAudio) {
+      currentAudio.removeEventListener("ended", playNote); // remove the event listener from the audio that has just stopped playing
     }
-  });
+    if (index >= arrOfAudio.length) {
+      return;
+    }
+    currentAudio = arrOfAudio[index];
+    index++; // when 'playNote' is called the next time, the next note will be played
+    currentAudio.play(); // when this ends, the 'ended' event will be fired and 'playNote' will be called
+    currentAudio.addEventListener("ended", playNote);
+  }
+  playNote();
 }
 
-let notes = notesSelection(2, 10);
-playAllNotes(notes);
+let stage = 2;
+let difficultyLevel = 10;
+let notes;
+let roundNum = 1;
+
+function updateRound() {
+  document.getElementById(
+    "roundDisplay"
+  ).textContent = `You will hear ${stage} notes. You are on Round ${roundNum}`;
+}
+
+document
+  .getElementById("play")
+  .addEventListener("click", () => playRound(stage, difficultyLevel));
+
+function playRound(stage, difficultyLevel) {
+  notes = notesSelection(stage, difficultyLevel);
+  playAllNotes(notes);
+  console.log(notes[0].selection, notes[1].selection);
+}
+document.getElementById("ishigher").addEventListener("click", () => {
+  // document.getElementById("play").removeEventListener("click", playItSam);
+  isHigher(notes) ? success() : failure();
+});
+
+document.getElementById("islower").addEventListener("click", () => {
+  // document.getElementById("play").removeEventListener("click", playItSam);s
+  isHigher(notes) ? failure() : success();
+});
+
+function success() {
+  resultRevealSection.textContent = "Correct! Next round...";
+  if (difficultyLevel === 1) {
+    stage += 1;
+    difficultyLevel = 10;
+  } else {
+    difficultyLevel -= 1;
+  }
+  roundNum++;
+  updateRound();
+}
+
+function failure() {
+  resultRevealSection.textContent = "WHOMP WHOMP! Start again.";
+  stage = 2;
+  difficultyLevel = 10;
+  roundNum = 1;
+  updateRound();
+}
