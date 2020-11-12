@@ -7,12 +7,18 @@
   </head>
   <body>
     <h1>Listen...</h1>
-    <button id="play">Play Sound</button>
-    <p>Is the last note higher or lower than the first?</p>
-    <p id="roundDisplay">You will hear 2 notes. You are on Round 1.</p>
-    <div id="noteRevealSection"></div>
+
+    <h2 id="roundDisplay">You will hear 2 notes. You are on Round 1.</h2>
+    <p>Is the <b>final</b> note higher or lower than the first?</p>
+
+    <p>Click "Play Sound" to Start</p>
+    <div id="buttonzone">
+      <button id="play">Play Sound</button>
+
+      <button id="islower">Lower</button><button id="ishigher">Higher</button>
+    </div>
     <div id="resultReveal"></div>
-    <button id="islower">Lower</button><button id="ishigher">Higher</button>
+    <h3 id="countdown"></h3>
     <script src="script.js" type="module"></script>
     <!-- <script src="./node_modules/tone/build/esm/index.js"></script> -->
   </body>

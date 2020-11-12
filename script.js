@@ -124,8 +124,31 @@ document.getElementById("islower").addEventListener("click", () => {
   isHigher(notes) ? failure() : success();
 });
 
+function displayCountdown() {
+  let count = 4;
+  resultRevealSection.textContent = `Correct! Next round in...`;
+  let countdownDiv = document.getElementById("countdown");
+  let countdown = window.setInterval(() => {
+    count--;
+    countdownDiv.textContent = count;
+  }, 1000);
+  window.setTimeout(() => {
+    clearInterval(countdown);
+    resultRevealSection.textContent = `Click "Play Sound" to Start`;
+    countdownDiv.textContent = "";
+    toggleButtonDisplay();
+  }, 4000);
+}
+
+function toggleButtonDisplay() {
+  let buttonContainer = document.getElementById("buttonzone");
+  buttonContainer.style.display =
+    buttonContainer.style.display === "none" ? "block" : "none";
+}
+
 function success() {
-  resultRevealSection.textContent = "Correct! Next round...";
+  toggleButtonDisplay();
+  displayCountdown();
   if (difficultyLevel === 1) {
     stage += 1;
     difficultyLevel = 10;
