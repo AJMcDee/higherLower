@@ -56,7 +56,10 @@ function notesSelection(noteAmount, difficultyLevel) {
 }
 
 function isHigher(arrOfNotes) {
-  let isHigher = arrOfNotes[1].index > arrOfNotes[0].index ? true : false;
+  let isHigher =
+    arrOfNotes[arrOfNotes.length - 1].index > arrOfNotes[0].index
+      ? true
+      : false;
   return isHigher;
 }
 
@@ -105,7 +108,6 @@ let roundNum = 1;
 function playRound(stage, difficultyLevel) {
   notes = notesSelection(stage, difficultyLevel);
   playAllNotes(notes);
-  console.log(notes[0].selection, notes[1].selection);
 }
 
 function success() {
