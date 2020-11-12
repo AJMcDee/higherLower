@@ -1,3 +1,22 @@
+//DOM and Event Listeners
+
+let resultRevealSection = document.getElementById("resultReveal");
+
+document
+  .getElementById("play")
+  .addEventListener("click", () => playRound(stage, difficultyLevel));
+
+document.getElementById("ishigher").addEventListener("click", () => {
+  // document.getElementById("play").removeEventListener("click", playItSam);
+  isHigher(notes) ? success() : failure();
+});
+
+document.getElementById("islower").addEventListener("click", () => {
+  // document.getElementById("play").removeEventListener("click", playItSam);s
+  isHigher(notes) ? failure() : success();
+});
+
+//Settings and setup
 let musicalNotes = [
   "C#",
   "D",
@@ -12,7 +31,6 @@ let musicalNotes = [
   "B",
   "C",
 ];
-let resultRevealSection = document.getElementById("resultReveal");
 
 function generateRandomNote() {
   let index = Math.floor(Math.random() * musicalNotes.length);
@@ -20,17 +38,8 @@ function generateRandomNote() {
   return { selection, index };
 }
 
-function revealNoteName(arrOfNotes) {
-  for (note of arrOfNotes) {
-    let noteName = document.createElement("div");
-    noteName.className = "noteReveal";
-    noteName.innerHTML = note.selection;
-    document.getElementById("noteRevealSection").appendChild(noteName);
-  }
-}
-
 function notesSelection(noteAmount, difficultyLevel) {
-  //Scaling from 10 as easiest to 1 as hardest
+  //Scaling from 5 as easiest to 1 as hardest
   let finalNotes = [];
   for (let i = 0; i < noteAmount - 1; i++) {
     finalNotes.push(generateRandomNote());
@@ -51,15 +60,7 @@ function isHigher(arrOfNotes) {
   return isHigher;
 }
 
-function revealAnswer(isHigher) {
-  let higherText = document.createElement("div");
-  higherText.innerHTML = isHigher ? "Higher" : "Lower";
-  document.getElementById("noteRevealSection").appendChild(higherText);
-}
-
-// let selection = notesSelection(3, 4);
-// revealNoteName(selection);
-// revealAnswer(isSecondNoteHigher(selection));
+// Audio functions
 
 function playNote(noteObject) {
   let testNote = new Audio(`./files/${noteObject.index}.mp3`);
@@ -94,10 +95,41 @@ function playAllNotes(arrOfNotes) {
   playNote();
 }
 
+// Gameplay
+
 let stage = 2;
-let difficultyLevel = 10;
+let difficultyLevel = 5;
 let notes;
 let roundNum = 1;
+
+function playRound(stage, difficultyLevel) {
+  notes = notesSelection(stage, difficultyLevel);
+  playAllNotes(notes);
+  console.log(notes[0].selection, notes[1].selection);
+}
+
+function success() {
+  toggleButtonDisplay();
+  displayCountdown();
+  if (difficultyLevel === 1) {
+    stage += 1;
+    difficultyLevel = 5;
+  } else {
+    difficultyLevel -= 1;
+  }
+  roundNum++;
+  updateRound();
+}
+
+function failure() {
+  resultRevealSection.textContent = "WHOMP WHOMP! Start again.";
+  stage = 2;
+  difficultyLevel = 5;
+  roundNum = 1;
+  updateRound();
+}
+
+// DOM Updates and Toggles
 
 function updateRound() {
   document.getElementById(
@@ -105,24 +137,11 @@ function updateRound() {
   ).textContent = `You will hear ${stage} notes. You are on Round ${roundNum}`;
 }
 
-document
-  .getElementById("play")
-  .addEventListener("click", () => playRound(stage, difficultyLevel));
-
-function playRound(stage, difficultyLevel) {
-  notes = notesSelection(stage, difficultyLevel);
-  playAllNotes(notes);
-  console.log(notes[0].selection, notes[1].selection);
+function toggleButtonDisplay() {
+  let buttonContainer = document.getElementById("buttonzone");
+  buttonContainer.style.display =
+    buttonContainer.style.display === "none" ? "block" : "none";
 }
-document.getElementById("ishigher").addEventListener("click", () => {
-  // document.getElementById("play").removeEventListener("click", playItSam);
-  isHigher(notes) ? success() : failure();
-});
-
-document.getElementById("islower").addEventListener("click", () => {
-  // document.getElementById("play").removeEventListener("click", playItSam);s
-  isHigher(notes) ? failure() : success();
-});
 
 function displayCountdown() {
   let count = 4;
@@ -134,35 +153,8 @@ function displayCountdown() {
   }, 1000);
   window.setTimeout(() => {
     clearInterval(countdown);
-    resultRevealSection.textContent = `Click "Play Sound" to Start`;
+    resultRevealSection.textContent = "";
     countdownDiv.textContent = "";
     toggleButtonDisplay();
   }, 4000);
-}
-
-function toggleButtonDisplay() {
-  let buttonContainer = document.getElementById("buttonzone");
-  buttonContainer.style.display =
-    buttonContainer.style.display === "none" ? "block" : "none";
-}
-
-function success() {
-  toggleButtonDisplay();
-  displayCountdown();
-  if (difficultyLevel === 1) {
-    stage += 1;
-    difficultyLevel = 10;
-  } else {
-    difficultyLevel -= 1;
-  }
-  roundNum++;
-  updateRound();
-}
-
-function failure() {
-  resultRevealSection.textContent = "WHOMP WHOMP! Start again.";
-  stage = 2;
-  difficultyLevel = 10;
-  roundNum = 1;
-  updateRound();
 }
