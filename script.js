@@ -110,7 +110,7 @@ function playRound(stage, difficultyLevel) {
 
 function success() {
   toggleButtonDisplay();
-  displayCountdown();
+  displayCountdown("success");
   if (difficultyLevel === 1) {
     stage += 1;
     difficultyLevel = 5;
@@ -122,7 +122,8 @@ function success() {
 }
 
 function failure() {
-  resultRevealSection.textContent = "WHOMP WHOMP! Start again.";
+  toggleButtonDisplay();
+  displayCountdown("failure");
   stage = 2;
   difficultyLevel = 5;
   roundNum = 1;
@@ -134,7 +135,7 @@ function failure() {
 function updateRound() {
   document.getElementById(
     "roundDisplay"
-  ).textContent = `You will hear ${stage} notes. You are on Round ${roundNum}`;
+  ).textContent = `You will hear ${stage} notes. You are on Round ${roundNum}.`;
 }
 
 function toggleButtonDisplay() {
@@ -143,9 +144,12 @@ function toggleButtonDisplay() {
     buttonContainer.style.display === "none" ? "block" : "none";
 }
 
-function displayCountdown() {
+function displayCountdown(status) {
   let count = 4;
-  resultRevealSection.textContent = `Correct! Next round in...`;
+  resultRevealSection.textContent =
+    status === "success"
+      ? `Correct! Next round in...`
+      : "WHOMP WHOMP! Start again from the beginning in...";
   let countdownDiv = document.getElementById("countdown");
   let countdown = window.setInterval(() => {
     count--;
